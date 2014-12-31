@@ -1,0 +1,341 @@
+<!DOCTYPE html><html><head>
+<script>
+'*** tvkaista-android Copyright (c) 2014 Viljo Viitanen *** License: search source for text LICENSE ***';
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+<script 
+  src="bower_components/webcomponentsjs/webcomponents.js">
+</script>
+<link rel="stylesheet" href="style.css">
+<link rel="import" href="bower_components/app-router/app-router.html">
+<link rel="import" href="bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="bower_components/core-collapse/core-collapse.html">
+<link rel="import" href="bower_components/core-drawer-panel/core-drawer-panel.html">
+<link rel="import" href="bower_components/core-icons/core-icons.html">
+<link rel="import" href="bower_components/core-item/core-item.html">
+<link rel="import" href="bower_components/core-header-panel/core-header-panel.html">
+<link rel="import" href="bower_components/core-menu/core-menu.html">
+<link rel="import" href="bower_components/core-scaffold/core-scaffold.html">
+<link rel="import" href="bower_components/core-toolbar/core-toolbar.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
+<link rel="import" href="bower_components/paper-dropdown/paper-dropdown.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="bower_components/paper-input/paper-input.html">
+<link rel="import" href="bower_components/paper-item/paper-item.html">
+<link rel="import" href="bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="page-about.html">
+<link rel="import" href="page-results.html">
+<link rel="import" href="search-bar.html">
+
+</head>
+<body>
+<core-scaffold responsiveWidth="1000px">
+  <core-header-panel navigation flex>
+    <core-toolbar id="navheader">
+      <span>Menu</span>
+    </core-toolbar>
+    <core-menu onclick="closepanel()">
+      <paper-item><a href="#/">Päävalikko</a></paper-item>
+      <paper-item><a href="#quality">Laatu</a></paper-item>
+      <paper-item><a href="#logout">Kirjaudu ulos</a></paper-item>
+      <paper-item><a href="#about">Tietoja sovelluksesta</a></paper-item>
+    </core-menu>
+  </core-header-panel>
+  <span tool flex></span>
+  <span tool><search-bar theme=light></span>
+  <div id="maincontent" class="content">
+  <app-router init="manual" mode="hash">
+    <app-route path="/">
+	<template>
+	    <core-menu>
+	      <paper-item><a href="#!playlist">Lista</a></paper-item>
+	      <paper-item><a href="#!seasonpasses/*">Sarjat</a></paper-item>
+	      <paper-item><a href="#!search/elokuva">Elokuvat</a></paper-item>
+	    </core-menu>
+	</template>
+    </app-route>
+    <app-route path="search">
+	<template>
+	<core-menu>
+	  <template id="searches" repeat="{{s}}">
+	    <core-item lines>
+	      <paper-item flex onclick="click_value(event)" style="overflow: hidden;">{{}}</a></paper-item>
+	      <paper-menu-button>
+		<paper-icon-button icon="more-vert" style="color: #aaa"></paper-icon-button>
+		<paper-dropdown class="dropdown" halign="right">
+		  <core-menu class="menu">
+		      <paper-item onclick="remove_value('{{}}')">Remove</paper-item>
+		  </core-menu>
+		</paper-dropdown>
+	      </paper-menu-button>
+	    </core-item>
+	  </template>
+	</core-menu>
+	<script>
+	// this code should really by "Polymerized", but...
+	// searchlist is stored like this: { "item": count, "item2", count }
+	var sl;
+	if (localStorage.getItem("searchlist")) {
+	    sl = JSON.parse(localStorage.getItem("searchlist"));
+	}
+	else {
+	    sl={};
+	}
+
+	function update_sl() {
+	  var t = document.getElementById('searches');
+	  t.model = {
+		// 50 first items in an array, sorted by count
+		s: Object.keys(sl).sort(function(a,b){return sl[b]-sl[a]}).splice(0,50)
+	  };
+	}
+
+	function click_value(e) {
+	  val=e.target.textContent;
+	  sl[val]=1+sl[val];
+	  localStorage.setItem("searchlist",JSON.stringify(sl));
+	  setTimeout(function() {window.location.hash = "!search/"+val;},10);
+	  
+	}
+
+	function search(form) {
+	  if (form.s.value=='') return false;
+	  sl[form.s.value]=1+sl[form.s.value];
+	  localStorage.setItem("searchlist",JSON.stringify(sl));
+	  window.location.hash = "results/"+form.s.value;
+	  return false;
+	}
+
+	function remove_value(val) {
+	  delete sl[val];
+	  localStorage.setItem("searchlist",JSON.stringify(sl));
+	  update_sl();
+	}
+
+	setTimeout(update_sl,10);
+	</script>
+	</template>
+    </app-route>
+    <app-route path="/^!/" regex element="page-results"></app-route>
+    <app-route path="login">
+	<template>
+	  <core-menu id="login">
+	    <core-item><paper-item><a href="#about">Tietoja tvkaista-android v2 sovelluksesta</a></paper-item></core-item>
+	    <core-item><paper-input id="user" label="Käyttäjätunnus"></paper-input></core-item>
+	    <core-item><paper-input-decorator label="Salasana"><input is="core-input" id="pass" type="password" onkeydown="return keydown(event)"></paper-input-decorator></core-item>
+	    <core-item><paper-toggle-button id="remember"></paper-toggle-button>Muista kirjautuminen 2 viikkoa</core-item>
+	    <core-item><paper-button raised onclick="login()">Kirjaudu sisään</paper-button></core-item>
+	    <div id="msg" style="margin-top:1em"></div>
+	  </core-menu>
+	</template>
+    </app-route>
+    <app-route path="logout">
+	<template>
+	  <core-menu>
+	    <core-item><paper-button raised onclick="logout()">Kirjaudu ulos</paper-button></core-item>
+	  </core-menu>
+	</template>
+    </app-route>
+    <app-route path="quality">
+	<template>
+	  <core-menu>
+	    <core-item>Laatu nyt: <span id="quality"><span></core-item>
+	    <core-item><paper-button raised onclick="togglequality()">Vaihda laatua</paper-button></core-item>
+	  </core-menu>
+	  <script>
+	    showquality();
+	  </script>
+	</template>
+    </app-route>
+    <app-route path="play" template>
+	<template>
+		<core-menu>
+		  <paper-item noink>{{tt}}<br>{{c}} {{tm}} {{l}}<br>{{d}}</paper-item>
+		</core-menu>
+		<video id="v" controls src="{{u}}" onplay="ga('send','event','play')">
+		<script>
+		  //console.log(JSON.parse(decodeURIComponent(readCookie("login"))));
+		  var c=JSON.parse(decodeURIComponent(readCookie("login")));
+		  document.getElementById("v").src=document.getElementById("v").src+'?username='+
+		    encodeURIComponent(c.user)+'&password='+encodeURIComponent(c.pass);
+		  //console.log(document.getElementById("v").src);
+		</script>
+	</template>
+    </app-route>
+    <app-route path="about" element="page-about"></app-route>
+    <app-route path="*">
+	<template>
+		<core-menu><core-item>Virheellinen osoite.</core-item></core-menu>
+	</template>
+    </app-route>
+  </app-router>
+  </div>
+</core-scaffold>
+<core-ajax id="searchajax" handleAs="json">
+</core-ajax>
+<core-ajax id="loginajax" url="/login" handleAs="json" method="POST">
+</core-ajax>
+<script>
+  function createCookie(name,value,days) {
+	if (days) {
+		var date = new Date();
+		date.setTime(date.getTime()+(days*24*60*60*1000));
+		var expires = "; expires="+date.toGMTString();
+	}
+	else var expires = "";
+	document.cookie = name+"="+value+expires+"; path=/";
+  }
+  function readCookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0;i < ca.length;i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+	}
+	return null;
+  }
+
+  function showquality() {
+    var quality=readCookie("quality");
+    if (quality!="mp4" && quality!="h264") {
+      //1M
+      document.getElementById("quality").innerHTML="1M";
+    }
+    else if (quality!="mp4") {
+      //2M
+      document.getElementById("quality").innerHTML="2M";
+    }
+    else {
+      //300k
+      document.getElementById("quality").innerHTML="300k";
+    }
+  }
+  function togglequality() {
+    sessionStorage.clear();
+    var quality=readCookie("quality");
+    if (quality!="h264" && quality!="mp4") {
+      createCookie("quality","h264",10000);
+    }
+    else if (quality!="mp4") {
+      createCookie("quality","mp4",10000);
+    }
+    else {
+      createCookie("quality","mpeg4",10000);
+    }
+    showquality();
+  }
+  function logout() {
+    sessionStorage.clear();
+    createCookie("login","",-1);
+    router=document.querySelector('app-router');
+    router.go('login');
+  }
+
+  function login() {
+	document.getElementById("msg").innerHTML="Tarkistetaan...";
+	var u=document.getElementById("user").value;
+	var p=document.getElementById("pass").value;
+	if (u=="" || p=="") {
+	  document.getElementById("msg").innerHTML="Tyhjä käyttäjätunnus tai salasana";
+	  return;
+	}
+        document.getElementById("loginajax").addEventListener("core-error", function(e) {
+	      document.getElementById("msg").innerHTML="Kirjautuminen ei onnistunut palvelinvirheen takia: "+e.detail.xhr.status;
+        });
+        document.getElementById("loginajax").addEventListener("core-response", function(e) {
+              var r=e.detail.response.login;
+	      if (r=="ok") {
+		var days=0;
+	        if (document.getElementById("remember").checked) {
+		  days=14;
+		}
+                createCookie("login",encodeURIComponent(JSON.stringify({'user':u,'pass':p})),days);
+                router=document.querySelector('app-router');
+		//when vulcanized, app-router bugs and leaves the contents visible. weird.
+	        document.getElementById("login").innerHTML="";
+                router.go('/');
+	      }
+	      else {
+	        document.getElementById("msg").innerHTML="Kirjautuminen ei onnistunut: "+r;
+	      }
+        });
+        document.getElementById("loginajax").params={"u":u,"p":p};
+        document.getElementById("loginajax").go();
+  };
+  function keydown(e) {
+        if (event.which == 13 || event.keyCode == 13) {
+            login();
+            return false;
+        }
+        return true;
+  };
+  function closepanel() {
+        document.querySelector('core-scaffold').closeDrawer();
+  };
+
+  window.addEventListener('WebComponentsReady', function() {
+      //console.log("WebComponentsReady");
+      router=document.querySelector('app-router');
+
+      router.addEventListener('state-change', function(event) {
+        if (event.detail.path != 'login' && event.detail.path != 'about' && !readCookie("login")) {
+          event.preventDefault();
+          router.go('login');
+        }
+      });
+
+      document.getElementById("searchajax").addEventListener("core-error", function(e) {
+            //console.log("in core-error");
+            document.querySelector('page-results').msg('Palvelinvirhe '+e.detail.xhr.status);
+      });
+
+      document.getElementById("searchajax").addEventListener("core-response", function(e) {
+            //console.log("in core-response");
+            //console.log(e);
+            document.querySelector('page-results').stop();
+            document.querySelector('page-results').r=e.detail.response.result;
+	    var d = new Date();
+	    var a=document.createElement("a");
+	    a.href=e.detail.xhr.responseURL;
+	    //console.log(a.pathname+a.search+" stored in sessionstorage "+d.getTime());
+	    sessionStorage.setItem(a.pathname+a.search,JSON.stringify({time:d.getTime(),result:e.detail.response.result}));
+      });
+
+      router.addEventListener('activate-route-end', function(event) {
+        if (event.detail.path != 'search') {
+          document.querySelector('search-bar').closeSearch();
+	}
+        if (event.detail.path.substring(0,1)=='!') {
+	  //console.log("in !");
+          if(event.detail.path.indexOf('/')==-1) {
+            var path=event.detail.path.substring(1);
+            var param="";
+	  } else {
+            var path=event.detail.path.substring(1,event.detail.path.indexOf('/'));
+	    var param=event.detail.path.substring(event.detail.path.indexOf('/')+1);
+	  }
+          var key='/'+path+'?param='+encodeURIComponent(param);
+	  if (sessionStorage.getItem(key)) {
+	    var s=JSON.parse(sessionStorage.getItem(key));
+	    var d = new Date();
+	    if (d.getTime() - s.time < 60*1000) { //1 minute
+              //console.log(key+" sessionstorage hit "+(d.getTime()-+s.time));
+              document.querySelector('page-results').r=s.result;
+              document.querySelector('page-results').stop();
+	      return;
+	    }
+	  }
+          document.getElementById("searchajax").url='/'+path;
+          document.getElementById("searchajax").params={"param":param};
+          document.getElementById("searchajax").go();
+	}
+      });
+      router.init();
+  });
+</script>
+<script src="/script"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+/* Copyright (c) 2014 Viljo Viitanen */
+body {
+  font-family: sans-serif;
+}
+#navheader {
+  background-color: #666;
+  color: #fff;
+}
+core-scaffold::shadow core-toolbar {
+  background-color: #666;
+}
+span[tool]>a {
+  color: #fff;
+  text-decoration: none;
+}
+a {
+  color: #000;
+  text-decoration: none;
+}
+core-item[lines] {
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+core-item:last-child {
+  border-bottom: none;
+}
+.core-selected {
+  font-weight: normal;
+}
+video {
+  width: 100%
+}
+paper-button {
+      background: #ffffff;
+}
+.right {
+  float: right; opacity: 0.5;
+}
