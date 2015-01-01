@@ -264,26 +264,7 @@
 	  document.getElementById("msg").innerHTML="Tyhjä käyttäjätunnus tai salasana";
 	  return;
 	}
-        document.getElementById("loginajax").addEventListener("core-error", function(e) {
-	      document.getElementById("msg").innerHTML="Kirjautuminen ei onnistunut palvelinvirheen takia: "+e.detail.xhr.status;
-        });
-        document.getElementById("loginajax").addEventListener("core-response", function(e) {
-              var r=e.detail.response.login;
-	      if (r=="ok") {
-		var days=0;
-	        if (document.getElementById("remember").checked) {
-		  days=14;
-		}
-                createCookie("login",encodeURIComponent(JSON.stringify({'user':u,'pass':p})),days);
-                router=document.querySelector('app-router');
-		//when vulcanized, app-router bugs and leaves the contents visible. weird.
-	        document.getElementById("login").innerHTML="";
-                router.go('/');
-	      }
-	      else {
-	        document.getElementById("msg").innerHTML="Kirjautuminen ei onnistunut: "+r;
-	      }
-        });
+        document.getElementById("loginajax").abort();
         document.getElementById("loginajax").params={"u":u,"p":p};
         document.getElementById("loginajax").go();
   };
@@ -309,6 +290,28 @@
         }
       });
 
+      document.getElementById("loginajax").addEventListener("core-error", function(e) {
+	      document.getElementById("msg").innerHTML="Kirjautuminen ei onnistunut palvelinvirheen takia: "+e.detail.xhr.status;
+        });
+      document.getElementById("loginajax").addEventListener("core-response", function(e) {
+	      var u=document.getElementById("user").value;
+	      var p=document.getElementById("pass").value;
+              var r=e.detail.response.login;
+	      if (r=="ok") {
+		var days=0;
+	        if (document.getElementById("remember").checked) {
+		  days=14;
+		}
+                createCookie("login",encodeURIComponent(JSON.stringify({'user':u,'pass':p})),days);
+                router=document.querySelector('app-router');
+		//when vulcanized, app-router bugs and leaves the contents visible. weird.
+	        document.getElementById("login").innerHTML="";
+                router.go('/');
+	      }
+	      else {
+	        document.getElementById("msg").innerHTML="Kirjautuminen ei onnistunut: "+r;
+	      }
+        });
       document.getElementById("searchajax").addEventListener("core-error", function(e) {
             //console.log("in core-error");
             document.querySelector('page-results').msg('Palvelinvirhe '+e.detail.xhr.status);
