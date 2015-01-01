@@ -25,6 +25,7 @@
 <link rel="import" href="bower_components/paper-item/paper-item.html">
 <link rel="import" href="bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="bower_components/paper-shadow/paper-shadow.html">
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="page-about.html">
 <link rel="import" href="page-channels.html">
@@ -256,7 +257,7 @@
   }
 
   function login() {
-	document.getElementById("msg").innerHTML="Tarkistetaan...";
+	document.getElementById("msg").innerHTML="<paper-spinner active></paper-spinner>";
 	var u=document.getElementById("user").value;
 	var p=document.getElementById("pass").value;
 	if (u=="" || p=="") {
