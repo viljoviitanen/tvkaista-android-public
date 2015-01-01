@@ -316,6 +316,7 @@
       document.getElementById("searchajax").addEventListener("core-response", function(e) {
             //console.log("in core-response");
             //console.log(e);
+            document.getElementById("searchajax").abort();
             document.querySelector('page-results').stop();
             document.querySelector('page-results').r=e.detail.response.result;
 	    var d = new Date();
@@ -369,6 +370,7 @@
 	      return;
 	    }
 	  }
+          document.getElementById("searchajax").abort();
           document.getElementById("searchajax").url='/'+path;
           document.getElementById("searchajax").params={"param":param};
           document.getElementById("searchajax").go();
