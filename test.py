@@ -49,18 +49,20 @@ class MenuHandler(webapp2.RequestHandler):
 class ListSeasonPassesHandler(webapp2.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'application/json'   
-    self.response.write(json.dumps( {"seasonpasses": [ {"name": "Ohjelma A", "id": "1000"}, {"name": "Ohjelma B", "id": "1001"}, {"name": "Ohjelma C", "id": "1002"} ]} ))
+    self.response.write(json.dumps( {"seasonpasses": [ {"name": "Ohjelma A", "id": "1000", "day": param}, {"name": "Ohjelma B", "id": "1001", "day": param}, {"name": "Ohjelma C", "id": "1002", "day": param} ]} ))
 
 class ChannelHandler(webapp2.RequestHandler):
   def get(self):
+    param=self.request.GET['param']
     self.response.headers['Content-Type'] = 'application/json'   
-    self.response.write(json.dumps( {"channels": [{"name": "YLE TV1", "id": "100"}, {"name": "YLE TV2", "id": "101"}, {"name": "MTV3", "id": "102"}, {"name": "Nelonen", "id": "103"}, {"name": "YLE FEM", "id": "104"}, {"name": "Sub", "id": "105"}, {"name": "YLE Teema", "id": "106"}, {"name": "Liv", "id": "107"}, {"name": "JIM", "id": "108"}, {"name": "TV Viisi", "id": "109"}, {"name": "Kutonen", "id": "110"}, {"name": "FOX", "id": "111"}, {"name": "AVA", "id": "112"}]} ))
+    self.response.write(json.dumps( {"result": [{"name": "YLE TV1", "id": "100", "day": param}, {"name": "YLE TV2", "id": "101", "day": param}, {"name": "MTV3", "id": "102", "day": param}, {"name": "Nelonen", "id": "103", "day": param}, {"name": "YLE FEM", "id": "104", "day": param}, {"name": "Sub", "id": "105", "day": param}, {"name": "YLE Teema", "id": "106", "day": param}, {"name": "Liv", "id": "107", "day": param}, {"name": "JIM", "id": "108", "day": param}, {"name": "TV Viisi", "id": "109", "day": param}, {"name": "Kutonen", "id": "110", "day": param}, {"name": "FOX", "id": "111", "day": param}, {"name": "AVA", "id": "112", "day": param}]} ))
 
 
 class ProgramHandler(webapp2.RequestHandler):
   def get(self):
-    channel=self.request.GET['channel']
-    day=self.request.GET['day']
+    param=self.request.GET['param']
+    (channel,day)=param.split('!')
+    
     time.sleep(0.5)
     if day=="today":
       hour=18
@@ -69,8 +71,11 @@ class ProgramHandler(webapp2.RequestHandler):
     resp=[]
     i=0
     basetime=time.time()-hour*3600
+
     while i<hour:
-      resp.append({ 'time': 1000*(basetime+3600*i), 'purl': 'https://s3.amazonaws.com/viljoviitanen/WP_20130315_110705Z.mp4', 'title': ('Ohjelma %d'%i), 'desc': 'Ohjelman kuvaus', 'ch': 'KANAVA', 'id': 10000+i})
+      gt=time.gmtime(basetime+3600*i)
+      t=time.strftime("%H:%M",gt)
+      resp.append({ 'time': t, 'purl': 'https://s3.amazonaws.com/viljoviitanen/WP_20130315_110705Z.mp4', 'title': ('Ohjelma %d'%i), 'desc': 'Ohjelman kuvaus', 'ch': 'KANAVA', 'id': 10000+i})
       i=i+1
 
     self.response.headers['Content-Type'] = 'application/json'   

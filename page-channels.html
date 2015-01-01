@@ -1,0 +1,28 @@
+<!-- Copyright (c) 2014-2015 Viljo Viitanen -->
+
+<polymer-element name="page-channels" attributes="r">
+<template>
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="stylesheet" href="spinner.css" type="text/css">
+<core-menu>
+ <core-item id="loading">
+  <div class="spinner">Haetaan...</div>
+ </core-item>
+  <template id="results" repeat="{{r}}">
+   <core-item lines>
+    <paper-item flex><a href="#!programs/{{id}}!{{day}}">{{name}}</span></a></paper-item>
+   </core-item>
+  </template>
+</core-menu>
+</template>
+  <script>
+    Polymer('page-channels', {
+      msg: function(m) {
+        this.$.loading.innerHTML=m;
+      },
+      stop: function() {
+        this.$.loading.hidden=true;
+      },
+    });
+  </script>
+</polymer-element>

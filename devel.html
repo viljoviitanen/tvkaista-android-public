@@ -27,6 +27,7 @@
 <link rel="import" href="bower_components/paper-shadow/paper-shadow.html">
 <link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="page-about.html">
+<link rel="import" href="page-channels.html">
 <link rel="import" href="page-results.html">
 <link rel="import" href="search-bar.html">
 
@@ -52,10 +53,25 @@
     <app-route path="/">
 	<template>
 	    <core-menu>
-	      <paper-item><a href="#!playlist">Lista</a></paper-item>
-	      <paper-item><a href="#!seasonpasses/*">Sarjat</a></paper-item>
-	      <paper-item><a href="#!search/elokuva">Elokuvat</a></paper-item>
+	      <core-item lines><paper-item><a href="#!playlist">Lista</a></paper-item></core-item>
+	      <core-item lines><paper-item><a href="#!seasonpasses/*">Sarjat</a></paper-item></core-item>
+	      <core-item lines><paper-item><a href="#!search/elokuva">Elokuvat</a></paper-item></core-item>
+	      <core-item lines><paper-item><a href="#channels/today">Kanavat tänään</a></paper-item></core-item>
+	      <template id="days" repeat={{days}}>
+	        <core-item lines><paper-item><a href="#channels/{{day}}">{{name}}</a></paper-item></core-item>
+	      </template>
 	    </core-menu>
+	    <script>
+	      var days=[];
+	      var wday=['Sunnuntai','Maanantai','Tiistai','Keskiviikko','Torstai','Perjantai','Lauantai'];
+	      for (i=1; i<29; i++) {
+	        var date=new Date(Date.now()-i*86400*1000);
+	        var day=date.getUTCFullYear()+"/"+(1+date.getUTCMonth())+"/"+date.getUTCDate();
+	        var name=wday[date.getUTCDay()]+" "+date.getUTCDate()+"."+(1+date.getMonth())+".";
+		days.push({"day":day,"name":name});
+	       }
+	      document.getElementById("days").model={"days": days};
+	    </script>
 	</template>
     </app-route>
     <app-route path="search">
@@ -121,6 +137,7 @@
 	</template>
     </app-route>
     <app-route path="/^!/" regex element="page-results"></app-route>
+    <app-route path="/^channels/" regex element="page-channels"></app-route>
     <app-route path="login">
 	<template>
 	  <core-menu id="login">
@@ -175,6 +192,8 @@
   </app-router>
   </div>
 </core-scaffold>
+<core-ajax id="channelsajax" handleAs="json">
+</core-ajax>
 <core-ajax id="searchajax" handleAs="json">
 </core-ajax>
 <core-ajax id="loginajax" url="/login" handleAs="json" method="POST">
@@ -306,6 +325,23 @@
 	    sessionStorage.setItem(a.pathname+a.search,JSON.stringify({time:d.getTime(),result:e.detail.response.result}));
       });
 
+      document.getElementById("channelsajax").addEventListener("core-error", function(e) {
+            //console.log("in core-error channels");
+            document.querySelector('page-channels').msg('Palvelinvirhe '+e.detail.xhr.status);
+      });
+
+      document.getElementById("channelsajax").addEventListener("core-response", function(e) {
+            //console.log("in core-response channels");
+            //console.log(e);
+            document.querySelector('page-channels').stop();
+            document.querySelector('page-channels').r=e.detail.response.result;
+	    var d = new Date();
+	    var a=document.createElement("a");
+	    a.href=e.detail.xhr.responseURL;
+	    console.log(a.pathname+a.search+" stored in sessionstorage "+d.getTime());
+	    sessionStorage.setItem(a.pathname+a.search,JSON.stringify({time:d.getTime(),result:e.detail.response.result}));
+      });
+
       router.addEventListener('activate-route-end', function(event) {
         if (event.detail.path != 'search') {
           document.querySelector('search-bar').closeSearch();
@@ -333,6 +369,28 @@
           document.getElementById("searchajax").url='/'+path;
           document.getElementById("searchajax").params={"param":param};
           document.getElementById("searchajax").go();
+	}
+        // almost duplicate code here...
+        else if (event.detail.path.substring(0,8)=='channels') {
+	  console.log("in channels");
+          var path=event.detail.path.substring(0,event.detail.path.indexOf('/'));
+	  var param=event.detail.path.substring(event.detail.path.indexOf('/')+1);
+          var key='/'+path+'?param='+encodeURIComponent(param);
+          console.log(key);
+	  if (sessionStorage.getItem(key)) {
+            console.log(key+" in sessionstorage")
+	    var s=JSON.parse(sessionStorage.getItem(key));
+	    var d = new Date();
+	    if (d.getTime() - s.time < 60*60*1000) { //1 hour
+              console.log(key+" sessionstorage hit "+(d.getTime()-+s.time));
+              document.querySelector('page-channels').r=s.result;
+              document.querySelector('page-channels').stop();
+	      return;
+	    }
+	  }
+          document.getElementById("channelsajax").url='/'+path;
+          document.getElementById("channelsajax").params={"param":param};
+          document.getElementById("channelsajax").go();
 	}
       });
       router.init();
