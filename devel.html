@@ -53,12 +53,12 @@
     <app-route path="/">
 	<template>
 	    <core-menu>
-	      <core-item lines><paper-item><a href="#!playlist">Lista</a></paper-item></core-item>
-	      <core-item lines><paper-item><a href="#!seasonpasses/*">Sarjat</a></paper-item></core-item>
-	      <core-item lines><paper-item><a href="#!search/elokuva">Elokuvat</a></paper-item></core-item>
-	      <core-item lines><paper-item><a href="#channels/today">Kanavat tänään</a></paper-item></core-item>
+	      <core-item lines><paper-item flex noink><a href="#!playlist">Lista</a></paper-item></core-item>
+	      <core-item lines><paper-item flex noink><a href="#!seasonpasses/*">Sarjat</a></paper-item></core-item>
+	      <core-item lines><paper-item flex noink><a href="#!search/elokuva">Elokuvat</a></paper-item></core-item>
+	      <core-item lines><paper-item flex noink><a href="#channels/today">Kanavat tänään</a></paper-item></core-item>
 	      <template id="days" repeat={{days}}>
-	        <core-item lines><paper-item><a href="#channels/{{day}}">{{name}}</a></paper-item></core-item>
+	        <core-item lines><paper-item flex noink><a href="#channels/{{day}}">{{name}}</a></paper-item></core-item>
 	      </template>
 	    </core-menu>
 	    <script>
@@ -79,7 +79,7 @@
 	<core-menu>
 	  <template id="searches" repeat="{{s}}">
 	    <core-item lines>
-	      <paper-item flex onclick="click_value(event)" style="overflow: hidden;">{{}}</a></paper-item>
+	      <paper-item flex noink onclick="click_value(event)" style="overflow: hidden;">{{}}</a></paper-item>
 	      <paper-menu-button>
 		<paper-icon-button icon="more-vert" style="color: #aaa"></paper-icon-button>
 		<paper-dropdown class="dropdown" halign="right">

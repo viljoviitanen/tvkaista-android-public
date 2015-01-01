@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2014 Viljo Viitanen -->
+<!-- Copyright (c) 2014-2015 Viljo Viitanen -->
 
 <polymer-element name="page-results" attributes="r">
 <template>
@@ -11,7 +11,7 @@
   
   <template id="results" repeat="{{r}}">
    <core-item lines>
-    <paper-item flex><a href="#play?u={{purl}}&tt={{title}}&c={{ch}}&tm={{time}}&l={{dur}}&d={{desc}}">{{title}} <span class="right">{{time}}</span></a></paper-item>
+    <paper-item flex noink><a href="#play?u={{purl}}&tt={{title}}&c={{ch}}&tm={{time}}&l={{dur}}&d={{desc}}">{{title}} <span class="right">{{time}}</span></a></paper-item>
    </core-item>
   </template>
 </core-menu>
