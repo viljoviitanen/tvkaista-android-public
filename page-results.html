@@ -1,12 +1,12 @@
 <!-- Copyright (c) 2014-2015 Viljo Viitanen -->
 
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html">
 <polymer-element name="page-results" attributes="r">
 <template>
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="stylesheet" href="spinner.css" type="text/css">
 <core-menu>
  <core-item id="loading">
-  <div class="spinner">Haetaan...</div>
+   <paper-spinner active style="margin-left: auto; margin-right: auto;"></paper-spinner>
  </core-item>
   
   <template id="results" repeat="{{r}}">

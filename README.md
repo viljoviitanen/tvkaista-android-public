@@ -18,7 +18,6 @@ top of the list. Also a html5 sessionstorage cache is used for json replies.
 
 In addtition to to Polymer, this uses
 https://github.com/erikringsmuth/app-router to make a "single page app".
-Spinner is from https://github.com/jlong/css-spinners .
 
 This project combines code with several licenses. Browser-side client code is
 MIT and BSD licensed, see LICENSE.html . The simple test server test.py is
