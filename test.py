@@ -2,7 +2,7 @@
 # This Python file uses the following encoding: utf-8
 # vim: set autoindent:
 
-# Copyright (C) 2014 Viljo Viitanen
+# Copyright (C) 2014-2015 Viljo Viitanen
 # 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
