@@ -96,7 +96,8 @@ class ScriptHandler(webapp2.RequestHandler):
     self.response.headers['Content-Type'] = 'application/javascript' 
     self.response.write("""
 document.title="DEV tvkaista-android";
-
+document.getElementById("motd").innerHTML='<paper-shadow z="1"><paper-item style="background-color:#fff" onclick="motd()">Tämä on tvkaista-androidin kehitysversio, joka näyttää esimerkkisisältöä eikä ota yhteyttä tvkaistan rajapintaan. Käyttäjätunnukseksi ja salasanaksi käy mitä tahansa, kunhan eivät ole tyhjiä.<paper-icon-button icon="close" style="color: #822"></paper-icon-button></paper-item></paper-shadow>'
+function motd(){document.getElementById("motd").innerHTML=''}
 var ga=function(a,b,c){console.log("ga:",a,b,c)};
 """)
 
