@@ -53,9 +53,8 @@ class ListSeasonPassesHandler(webapp2.RequestHandler):
 
 class ChannelHandler(webapp2.RequestHandler):
   def get(self):
-    param=self.request.GET['param']
     self.response.headers['Content-Type'] = 'application/json'   
-    self.response.write(json.dumps( {"result": [{"name": "YLE TV1", "id": "100", "day": param}, {"name": "YLE TV2", "id": "101", "day": param}, {"name": "MTV3", "id": "102", "day": param}, {"name": "Nelonen", "id": "103", "day": param}, {"name": "YLE FEM", "id": "104", "day": param}, {"name": "Sub", "id": "105", "day": param}, {"name": "YLE Teema", "id": "106", "day": param}, {"name": "Liv", "id": "107", "day": param}, {"name": "JIM", "id": "108", "day": param}, {"name": "TV Viisi", "id": "109", "day": param}, {"name": "Kutonen", "id": "110", "day": param}, {"name": "FOX", "id": "111", "day": param}, {"name": "AVA", "id": "112", "day": param}]} ))
+    self.response.write(json.dumps( {"result": [{"name": "YLE TV1", "id": "100" }, {"name": "YLE TV2", "id": "101" }, {"name": "MTV3", "id": "102" }, {"name": "Nelonen", "id": "103" }, {"name": "YLE FEM", "id": "104" }, {"name": "Sub", "id": "105" }, {"name": "YLE Teema", "id": "106" }, {"name": "Liv", "id": "107" }, {"name": "JIM", "id": "108" }, {"name": "TV Viisi", "id": "109" }, {"name": "Kutonen", "id": "110" }, {"name": "FOX", "id": "111" }, {"name": "AVA", "id": "112" }]} ))
 
 
 class ProgramHandler(webapp2.RequestHandler):

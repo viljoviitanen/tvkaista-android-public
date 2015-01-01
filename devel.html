@@ -56,9 +56,9 @@
 	      <core-item lines><paper-item flex noink><a href="#!playlist">Lista</a></paper-item></core-item>
 	      <core-item lines><paper-item flex noink><a href="#!seasonpasses/*">Sarjat</a></paper-item></core-item>
 	      <core-item lines><paper-item flex noink><a href="#!search/elokuva">Elokuvat</a></paper-item></core-item>
-	      <core-item lines><paper-item flex noink><a href="#channels/today">Kanavat tänään</a></paper-item></core-item>
+	      <core-item lines><paper-item flex noink><a href="#channels?today">Kanavat tänään</a></paper-item></core-item>
 	      <template id="days" repeat={{days}}>
-	        <core-item lines><paper-item flex noink><a href="#channels/{{day}}">{{name}}</a></paper-item></core-item>
+	        <core-item lines><paper-item flex noink><a href="#channels?{{day}}">{{name}}</a></paper-item></core-item>
 	      </template>
 	    </core-menu>
 	    <script>
@@ -137,7 +137,7 @@
 	</template>
     </app-route>
     <app-route path="/^!/" regex element="page-results"></app-route>
-    <app-route path="/^channels/" regex element="page-channels"></app-route>
+    <app-route path="channels" element="page-channels"></app-route>
     <app-route path="login">
 	<template>
 	  <core-menu id="login">
@@ -192,7 +192,7 @@
   </app-router>
   </div>
 </core-scaffold>
-<core-ajax id="channelsajax" handleAs="json">
+<core-ajax id="channelsajax" handleAs="json" url="/channels">
 </core-ajax>
 <core-ajax id="searchajax" handleAs="json">
 </core-ajax>
@@ -332,14 +332,17 @@
 
       document.getElementById("channelsajax").addEventListener("core-response", function(e) {
             //console.log("in core-response channels");
-            //console.log(e);
             document.querySelector('page-channels').stop();
-            document.querySelector('page-channels').r=e.detail.response.result;
 	    var d = new Date();
 	    var a=document.createElement("a");
 	    a.href=e.detail.xhr.responseURL;
-	    console.log(a.pathname+a.search+" stored in sessionstorage "+d.getTime());
+	    //console.log(a.pathname+a.search+" stored in sessionstorage "+d.getTime());
 	    sessionStorage.setItem(a.pathname+a.search,JSON.stringify({time:d.getTime(),result:e.detail.response.result}));
+	    for(var i in e.detail.response.result) {
+	      //inject day into the response that's put into model
+	      e.detail.response.result[i].day=location.hash.substring(location.hash.indexOf('?')+1);
+	    }
+            document.querySelector('page-channels').r=e.detail.response.result;
       });
 
       router.addEventListener('activate-route-end', function(event) {
@@ -372,24 +375,23 @@
 	}
         // almost duplicate code here...
         else if (event.detail.path.substring(0,8)=='channels') {
-	  console.log("in channels");
-          var path=event.detail.path.substring(0,event.detail.path.indexOf('/'));
-	  var param=event.detail.path.substring(event.detail.path.indexOf('/')+1);
-          var key='/'+path+'?param='+encodeURIComponent(param);
-          console.log(key);
+	  //console.log("in channels");
+	  key="/channels";
 	  if (sessionStorage.getItem(key)) {
-            console.log(key+" in sessionstorage")
+            //console.log(key+" in sessionstorage")
 	    var s=JSON.parse(sessionStorage.getItem(key));
 	    var d = new Date();
 	    if (d.getTime() - s.time < 60*60*1000) { //1 hour
-              console.log(key+" sessionstorage hit "+(d.getTime()-+s.time));
+              //console.log(key+" sessionstorage hit "+(d.getTime()-+s.time));
+	      for(var i in s.result) {
+	        //inject day into the response that's put into model
+	        s.result[i].day=location.hash.substring(location.hash.indexOf('?')+1);
+	      }
               document.querySelector('page-channels').r=s.result;
               document.querySelector('page-channels').stop();
 	      return;
 	    }
 	  }
-          document.getElementById("channelsajax").url='/'+path;
-          document.getElementById("channelsajax").params={"param":param};
           document.getElementById("channelsajax").go();
 	}
       });
