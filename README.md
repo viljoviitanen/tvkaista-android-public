@@ -24,3 +24,7 @@ MIT and BSD licensed, see LICENSE.html . The simple test server test.py is
 GPLv2. The app and test server can be deployed to Heroku.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
+> Howto run locally: install python-virtualenv ```sudo apt-get install python-virtualenv```
+> then create a virtual environment and install dependicies there
+> ```virtualenv env; . env/bin/activate; pip install WebOb Paste webapp2; python test.py```
