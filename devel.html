@@ -169,21 +169,6 @@
 	  </script>
 	</template>
     </app-route>
-    <app-route path="play" template>
-	<template>
-		<core-menu>
-		  <paper-item noink>{{tt}}<br>{{c}} {{tm}} {{l}}<br>{{d}}</paper-item>
-		</core-menu>
-		<video id="v" controls src="{{u}}" onplay="ga('send','event','play')">
-		<script>
-		  //console.log(JSON.parse(decodeURIComponent(readCookie("login"))));
-		  var c=JSON.parse(decodeURIComponent(readCookie("login")));
-		  document.getElementById("v").src=document.getElementById("v").src+'?username='+
-		    encodeURIComponent(c.user)+'&password='+encodeURIComponent(c.pass);
-		  //console.log(document.getElementById("v").src);
-		</script>
-	</template>
-    </app-route>
     <app-route path="about" element="page-about"></app-route>
     <app-route path="*">
 	<template>
@@ -279,6 +264,16 @@
         document.querySelector('core-scaffold').closeDrawer();
   };
 
+  //inject username and password into urls
+  function injectcreds(m) {
+	var c=JSON.parse(decodeURIComponent(readCookie("login")));
+	var u=encodeURIComponent(c.user);
+	var p=encodeURIComponent(c.pass);
+	for(i in m) {
+	  m[i].purl=m[i].purl+'?username='+u+'&password='+p;
+	}
+	return m;
+  };
   //inject day into the response that's put into model
   function injectday(result) {
 	for(var i in result) {
@@ -329,7 +324,7 @@
             //console.log(e);
             document.getElementById("searchajax").abort();
             document.querySelector('page-results').stop();
-            document.querySelector('page-results').r=e.detail.response.result;
+            document.querySelector('page-results').r=injectcreds(e.detail.response.result);
 	    var d = new Date();
 	    var a=document.createElement("a");
 	    a.href=e.detail.xhr.responseURL;
@@ -372,7 +367,7 @@
 	    var d = new Date();
 	    if (d.getTime() - s.time < 60*1000) { //1 minute
               //console.log(key+" sessionstorage hit "+(d.getTime()-+s.time));
-              document.querySelector('page-results').r=s.result;
+              document.querySelector('page-results').r=injectcreds(s.result);
               document.querySelector('page-results').stop();
 	      return;
 	    }

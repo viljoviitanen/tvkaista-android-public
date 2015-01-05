@@ -4,15 +4,29 @@
 <polymer-element name="page-results" attributes="r">
 <template>
 <link rel="stylesheet" href="style.css" type="text/css">
-<core-menu>
+<style>
+core-item[desc] {
+  white-space: normal;
+  font-size: small; 
+  background-color: white;
+  padding-left: 0.5em;
+}
+</style>
+<core-menu id="menu">
  <core-item id="loading">
    <paper-spinner active style="margin-left: auto; margin-right: auto;"></paper-spinner>
  </core-item>
   
   <template id="results" repeat="{{r}}">
    <core-item lines>
-    <paper-item flex noink><a href="#play?u={{purl}}&tt={{title}}&c={{ch}}&tm={{time}}&l={{dur}}&d={{desc}}">{{title}} <span class="right">{{time}}</span></a></paper-item>
+    <paper-item flex noink><a data-id="{{id}}" on-click="{{togglesubmenu}}">{{title}} <span class="right">{{time}}</span></a></paper-item>
    </core-item>
+   <div class="submenu" id="p{{id}}" hidden>
+     <core-item desc>{{ch}} {{time}} {{dur}}<br>{{desc}}</core-item>
+     <core-item>
+      <video id="v" controls poster="{{thumb}}" preload="none" src="{{purl}}" onplay="ga('send','event','play')">
+     </core-item>
+   </div>
   </template>
 </core-menu>
 </template>
@@ -23,6 +37,15 @@
       },
       stop: function() {
         this.$.loading.hidden=true;
+      },
+      togglesubmenu: function(event,detail,sender) {
+	var elem=this.$.menu.querySelector('#p'+sender.dataset.id);
+	var h=elem.hidden;
+	var allelems=this.$.menu.querySelectorAll('.submenu');
+	for(i in allelems){
+	  allelems[i].hidden=true;
+	}
+	elem.hidden=!h;
       },
     });
   </script>

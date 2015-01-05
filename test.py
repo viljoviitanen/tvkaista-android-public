@@ -74,7 +74,7 @@ class ProgramHandler(webapp2.RequestHandler):
     while i<hour:
       gt=time.gmtime(basetime+3600*i)
       t=time.strftime("%H:%M",gt)
-      resp.append({ 'time': t, 'purl': 'https://s3.amazonaws.com/viljoviitanen/WP_20130315_110705Z.mp4', 'title': ('Ohjelma %d'%i), 'desc': 'Ohjelman kuvaus', 'ch': 'KANAVA', 'id': 10000+i})
+      resp.append({ 'time': t, 'thumb': 'https://s3.amazonaws.com/viljoviitanen/WP_20130315_110705Z.jpg', 'purl': 'https://s3.amazonaws.com/viljoviitanen/WP_20130315_110705Z.mp4', 'title': ('Ohjelma %d'%i), 'desc': 'Ohjelman kuvaus', 'ch': 'KANAVA', 'id': 10000+i})
       i=i+1
 
     self.response.headers['Content-Type'] = 'application/json'   
@@ -82,13 +82,13 @@ class ProgramHandler(webapp2.RequestHandler):
 
 class SearchHandler(webapp2.RequestHandler):
   def get(self):
-    time.sleep(1)
+    time.sleep(0.5)
     resp=[]
     i=0
     hour=20
     basetime=time.time()-hour*3600
     while i<hour:
-      resp.append({ 'time': time.strftime("%d.%m klo %H:%M",time.gmtime(basetime+3600*i)), 'purl': 'https://s3.amazonaws.com/viljoviitanen/WP_20130315_110705Z.mp4', 'title': ('Ohjelma %d'%i), 'desc': 'Ohjelman kuvaus', 'ch': 'KANAVA', 'id': 10000+i})
+      resp.append({ 'time': time.strftime("%d.%m klo %H:%M",time.gmtime(basetime+3600*i)),'thumb': 'https://s3.amazonaws.com/viljoviitanen/WP_20130315_110705Z.jpg', 'purl': 'https://s3.amazonaws.com/viljoviitanen/WP_20130315_110705Z.mp4', 'title': ('Ohjelma %d'%i), 'desc': 'Ohjelman kuvaus', 'ch': 'KANAVA', 'id': 10000+i})
       i=i+1
 
     self.response.headers['Content-Type'] = 'application/json'   
