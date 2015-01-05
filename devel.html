@@ -24,6 +24,8 @@
 <link rel="import" href="bower_components/paper-input/paper-input.html">
 <link rel="import" href="bower_components/paper-item/paper-item.html">
 <link rel="import" href="bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="bower_components/paper-shadow/paper-shadow.html">
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
@@ -161,8 +163,14 @@
     <app-route path="quality">
 	<template>
 	  <core-menu>
-	    <core-item>Laatu nyt: <span id="quality"><span></core-item>
-	    <core-item><paper-button raised onclick="togglequality()">Vaihda laatua</paper-button></core-item>
+	    <core-item>Aseta laatu</core-item>
+	    <core-item>
+		<paper-radio-group id="quality">
+		  <paper-radio-button name="mp4" label="300k" onclick="setquality('mp4')"></paper-radio-button>
+		  <paper-radio-button name="mpeg4" label="1M" onclick="setquality('mpeg4')"></paper-radio-button>
+		  <paper-radio-button name="h264" label="2M" onclick="setquality('h264')"></paper-radio-button>
+		</paper-radio-group>
+	    </core-item>
 	  </core-menu>
 	  <script>
 	    showquality();
@@ -209,30 +217,20 @@
     var quality=readCookie("quality");
     if (quality!="mp4" && quality!="h264") {
       //1M
-      document.getElementById("quality").innerHTML="1M";
+      document.getElementById("quality").selected="mpeg4";
     }
     else if (quality!="mp4") {
       //2M
-      document.getElementById("quality").innerHTML="2M";
+      document.getElementById("quality").selected="h264";
     }
     else {
       //300k
-      document.getElementById("quality").innerHTML="300k";
+      document.getElementById("quality").selected="mp4";
     }
   }
-  function togglequality() {
+  function setquality(q) {
     sessionStorage.clear();
-    var quality=readCookie("quality");
-    if (quality!="h264" && quality!="mp4") {
-      createCookie("quality","h264",10000);
-    }
-    else if (quality!="mp4") {
-      createCookie("quality","mp4",10000);
-    }
-    else {
-      createCookie("quality","mpeg4",10000);
-    }
-    showquality();
+    createCookie("quality",q,10000);
   }
   function logout() {
     sessionStorage.clear();
