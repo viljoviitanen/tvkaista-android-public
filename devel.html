@@ -279,6 +279,13 @@
         document.querySelector('core-scaffold').closeDrawer();
   };
 
+  //inject day into the response that's put into model
+  function injectday(result) {
+	for(var i in result) {
+	  result[i].day=location.hash.substring(location.hash.indexOf('?')+1);
+	}
+  };
+
   window.addEventListener('WebComponentsReady', function() {
       //console.log("WebComponentsReady");
       router=document.querySelector('app-router');
@@ -343,11 +350,7 @@
 	    a.href=e.detail.xhr.responseURL;
 	    //console.log(a.pathname+a.search+" stored in sessionstorage "+d.getTime());
 	    sessionStorage.setItem(a.pathname+a.search,JSON.stringify({time:d.getTime(),result:e.detail.response.result}));
-	    for(var i in e.detail.response.result) {
-	      //inject day into the response that's put into model
-	      e.detail.response.result[i].day=location.hash.substring(location.hash.indexOf('?')+1);
-	    }
-            document.querySelector('page-channels').r=e.detail.response.result;
+            document.querySelector('page-channels').r=injectday(e.detail.response.result);
       });
 
       router.addEventListener('activate-route-end', function(event) {
@@ -389,11 +392,7 @@
 	    var d = new Date();
 	    if (d.getTime() - s.time < 60*60*1000) { //1 hour
               //console.log(key+" sessionstorage hit "+(d.getTime()-+s.time));
-	      for(var i in s.result) {
-	        //inject day into the response that's put into model
-	        s.result[i].day=location.hash.substring(location.hash.indexOf('?')+1);
-	      }
-              document.querySelector('page-channels').r=s.result;
+              document.querySelector('page-channels').r=injectday(s.result);
               document.querySelector('page-channels').stop();
 	      return;
 	    }
