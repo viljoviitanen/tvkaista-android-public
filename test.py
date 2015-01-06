@@ -49,7 +49,7 @@ class MenuHandler(webapp2.RequestHandler):
 class ListSeasonPassesHandler(webapp2.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'application/json'   
-    self.response.write(json.dumps( {"seasonpasses": [ {"name": "Ohjelma A", "id": "1000", "day": param}, {"name": "Ohjelma B", "id": "1001", "day": param}, {"name": "Ohjelma C", "id": "1002", "day": param} ]} ))
+    self.response.write(json.dumps( {"seasonpasses": [ {"name": "Ohjelma A", "id": "1000"}, {"name": "Ohjelma B", "id": "1001" }, {"name": "Ohjelma C", "id": "1002" } ]} ))
 
 class ChannelHandler(webapp2.RequestHandler):
   def get(self):
