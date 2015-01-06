@@ -28,6 +28,7 @@
 <link rel="import" href="bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="bower_components/paper-shadow/paper-shadow.html">
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="page-about.html">
 <link rel="import" href="page-channels.html">
@@ -44,6 +45,7 @@
     <core-menu onclick="closepanel()">
       <paper-item><a href="#/">Päävalikko</a></paper-item>
       <paper-item><a href="#quality">Laatu</a></paper-item>
+      <paper-item><a href="#seasonpasses">Hallitse sarjoja</a></paper-item>
       <paper-item><a href="#logout">Kirjaudu ulos</a></paper-item>
       <paper-item><a href="#about">Tietoja sovelluksesta</a></paper-item>
     </core-menu>
@@ -52,6 +54,7 @@
   <span tool><search-bar theme=light></span>
   <div id="maincontent" class="content">
   <div id="motd"></div>
+  <paper-toast id="toast"></paper-toast>
   <app-router init="manual" mode="hash">
     <app-route path="/">
 	<template>
@@ -75,6 +78,37 @@
 	       }
 	      document.getElementById("days").model={"days": days};
 	    </script>
+	</template>
+    </app-route>
+    <app-route path="seasonpasses">
+	<template>
+	<core-menu>
+	  <core-item id="seasonpassloading">
+	        <paper-spinner id="spinner" active style="margin-left: auto; margin-right: auto;"></paper-spinner>
+	  </core-item>
+	  <template id="seasonpasslist" repeat="{{s}}">
+	    <core-item lines>
+	      <paper-item flex noink style="overflow: hidden;">{{name}}</paper-item>
+	      <paper-menu-button>
+		<paper-icon-button icon="more-vert" style="color: #aaa"></paper-icon-button>
+		<paper-dropdown class="dropdown" halign="right">
+		  <core-menu class="menu">
+		      <paper-item onclick="remove_seasonpass('{{id}}')">Poista sarjoista</paper-item>
+		  </core-menu>
+		</paper-dropdown>
+	      </paper-menu-button>
+	    </core-item>
+	  </template>
+	</core-menu>
+	<script>
+	function remove_seasonpass(id) {
+	  //console.log("in remove reasonpass");
+	  //console.log(id);
+	  document.getElementById("seasonpassremoveajax").abort();
+	  document.getElementById("seasonpassremoveajax").params={"token":random,"id":id,"op":3};
+	  document.getElementById("seasonpassremoveajax").go();
+	}
+	</script>
 	</template>
     </app-route>
     <app-route path="search">
@@ -187,6 +221,10 @@
   </div>
 </core-scaffold>
 <core-ajax id="channelsajax" handleAs="json" url="/channels">
+</core-ajax>
+<core-ajax id="seasonpassremoveajax" handleAs="json" url="/menu" method="POST">
+</core-ajax>
+<core-ajax id="seasonpassajax" handleAs="json" url="/listseasonpasses">
 </core-ajax>
 <core-ajax id="searchajax" handleAs="json">
 </core-ajax>
@@ -348,6 +386,37 @@
             document.querySelector('page-channels').r=injectday(e.detail.response.result);
       });
 
+      document.getElementById("seasonpassajax").addEventListener("core-error", function(e) {
+            //console.log("in core-error seasonpassajax");
+            document.getElementById("seasonpassloading").innerHTML='Palvelinvirhe '+e.detail.xhr.status;
+      });
+
+      document.getElementById("seasonpassajax").addEventListener("core-response", function(e) {
+            //console.log("in core-response seasonpassajax");
+            //console.log(e);
+            document.getElementById("seasonpassloading").hidden=true;
+            document.getElementById("seasonpasslist").model.s=e.detail.response.seasonpasses;
+      });
+
+      document.getElementById("seasonpassremoveajax").addEventListener("core-error", function(e) {
+            //console.log("in core-error seasonpassremoveajax");
+            document.getElementById("toast").text="Sarjan poistaminen ei onnistunut!";
+            document.getElementById("toast").show()
+      });
+
+      document.getElementById("seasonpassremoveajax").addEventListener("core-response", function(e) {
+            //console.log("in core-response seasonpassremoveajax");
+            document.getElementById("toast").text="Sarja poistettu";
+            document.getElementById("toast").show()
+	    var s=document.getElementById("seasonpasslist").model.s;
+	    var id=document.getElementById("seasonpassremoveajax").params.id;
+	    for (i in s) {
+	      if (s[i].id==id) {
+	        delete s[i];
+	      }
+	    }
+      });
+
       router.addEventListener('activate-route-end', function(event) {
         if (event.detail.path != 'search') {
           document.querySelector('search-bar').closeSearch();
@@ -393,6 +462,10 @@
 	    }
 	  }
           document.getElementById("channelsajax").go();
+	}
+        else if (event.detail.path.substring(0,8)=='seasonpa') {
+	  //console.log("in seasonpasses");
+          document.getElementById("seasonpassajax").go();
 	}
       });
       router.init();
