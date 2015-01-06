@@ -277,6 +277,7 @@
 	for(var i in result) {
 	  result[i].day=location.hash.substring(location.hash.indexOf('?')+1);
 	}
+	return result;
   };
 
   window.addEventListener('WebComponentsReady', function() {
