@@ -78,10 +78,11 @@ class ProgramHandler(webapp2.RequestHandler):
       i=i+1
 
     self.response.headers['Content-Type'] = 'application/json'   
-    self.response.write(json.dumps( { 'result': resp } ))
+    self.response.write(json.dumps( { 'result': resp, 'path': self.request.path_qs } ))
 
 class SearchHandler(webapp2.RequestHandler):
   def get(self):
+    param=self.request.GET['param']
     time.sleep(0.5)
     resp=[]
     i=0
@@ -92,7 +93,7 @@ class SearchHandler(webapp2.RequestHandler):
       i=i+1
 
     self.response.headers['Content-Type'] = 'application/json'   
-    self.response.write(json.dumps( { 'result': resp } ))
+    self.response.write(json.dumps( { 'result': resp, 'path': self.request.path_qs } ))
 
 class ScriptHandler(webapp2.RequestHandler):
   def get(self):
