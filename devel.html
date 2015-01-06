@@ -280,6 +280,9 @@
 	return result;
   };
 
+  var random=Math.random();
+  createCookie('token',random);
+
   window.addEventListener('WebComponentsReady', function() {
       //console.log("WebComponentsReady");
       router=document.querySelector('app-router');

@@ -1,6 +1,7 @@
 <!-- Copyright (c) 2014-2015 Viljo Viitanen -->
 
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="bower_components/paper-toast/paper-toast.html">
 <polymer-element name="page-results" attributes="r">
 <template>
 <link rel="stylesheet" href="style.css" type="text/css">
@@ -8,10 +9,15 @@
 core-item[desc] {
   white-space: normal;
   font-size: small; 
-  background-color: white;
   padding-left: 0.5em;
 }
+.submenu {
+  background-color: white;
+}
 </style>
+<paper-toast id="toast"></paper-toast>
+<core-ajax id="menuajax" url="/menu" handleAs="json" method="POST" on-core-response={{ajaxresponse}} on-core-error={{ajaxerror}}>
+</core-ajax>
 <core-menu id="menu">
  <core-item id="loading">
    <paper-spinner active style="margin-left: auto; margin-right: auto;"></paper-spinner>
@@ -22,8 +28,18 @@ core-item[desc] {
     <paper-item flex noink><a data-id="{{id}}" on-click="{{togglesubmenu}}">{{title}} <span class="right">{{time}}</span></a></paper-item>
    </core-item>
    <div class="submenu" id="p{{id}}" hidden>
-     <core-item desc>{{ch}} {{time}} {{dur}}<br>{{desc}}</core-item>
-     <core-item>
+     <paper-menu-button style="float: right;">
+	<paper-icon-button icon="more-vert" style="color: #aaa"></paper-icon-button>
+	<paper-dropdown class="dropdown" halign="right">
+	  <core-menu class="menu">
+	      <paper-item data-id="{{id}}" on-click="{{addlist}}">Lisää listalle</paper-item>
+	      <paper-item data-id="{{id}}" on-click="{{removelist}}">Poista listalta</paper-item>
+	      <paper-item data-id="{{id}}" on-click="{{addseries}}">Lisää sarjoihin</paper-item>
+	  </core-menu>
+	</paper-dropdown>
+     </paper-menu-button>
+     <core-item desc flex>{{ch}} {{time}} {{dur}}<br>{{desc}}</core-item>
+     <core-item style="clear: both;">
       <video id="v" controls poster="{{thumb}}" preload="none" src="{{purl}}" onplay="ga('send','event','play')">
      </core-item>
    </div>
@@ -46,6 +62,37 @@ core-item[desc] {
 	  allelems[i].hidden=true;
 	}
 	elem.hidden=!h;
+      },
+      addlist: function(event,detail,sender) {
+	console.log("addlist");
+	console.log(sender.dataset.id);
+	this.$.menuajax.params={"token":random,"id":sender.dataset.id,"op":2};
+	this.$.toast.text="Ohjelma lisätty listalle";
+	this.$.menuajax.go();
+      },
+      removelist: function(event,detail,sender) {
+	console.log("removelist");
+	console.log(sender.dataset.id);
+	this.$.menuajax.params={"token":random,"id":sender.dataset.id,"op":1};
+	this.$.toast.text="Ohjelma poistettu listalta";
+	this.$.menuajax.go();
+      },
+      //removing the series ain't here 'cos it needs the seasonpass id, not program id
+      addseries: function(event,detail,sender) {
+	console.log("addseries");
+	console.log(sender.dataset.id);
+	this.$.menuajax.params={"token":random,"id":sender.dataset.id,"op":4};
+	this.$.toast.text="Ohjelma lisätty sarjoihin";
+	this.$.menuajax.go();
+      },
+      ajaxerror: function(event) {
+	console.log("in ajaxerror");
+	this.$.toast.text="Toiminto epäonnistui!"
+	this.$.toast.show();
+      },
+      ajaxresponse: function(event) {
+	console.log("in ajaxresponse");
+	this.$.toast.show();
       },
     });
   </script>
