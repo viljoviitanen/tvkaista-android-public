@@ -93,6 +93,8 @@ core-item[desc] {
       ajaxresponse: function(event) {
 	console.log("in ajaxresponse");
 	this.$.toast.show();
+	sessionStorage.removeItem("/seasonpasses?param=*");
+	sessionStorage.removeItem("/playlist?param=");
       },
     });
   </script>
