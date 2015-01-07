@@ -6,8 +6,10 @@
 <template>
 <link rel="stylesheet" href="style.css" type="text/css">
 <style>
-core-item[desc] {
+core-item {
   white-space: normal;
+}
+core-item[desc] {
   font-size: small; 
   padding-left: 0.5em;
 }
@@ -23,26 +25,29 @@ core-item[desc] {
    <paper-spinner active style="margin-left: auto; margin-right: auto;"></paper-spinner>
  </core-item>
   
-  <template id="results" repeat="{{r}}">
+  <template id="results" repeat="{{r in r}}">
    <core-item lines>
-    <paper-item flex noink><a data-id="{{id}}" on-click="{{togglesubmenu}}">{{title}} <span class="right">{{time}}</span></a></paper-item>
+    <paper-item flex noink id="p{{r.id}}"><a on-click="{{togglesubmenu}}" data-id="{{r.id}}"
+    >{{r.title}} <span class="right">{{r.time}}</span></a></paper-item>
    </core-item>
-   <div class="submenu" id="p{{id}}" hidden>
+   <template if="{{r.active}}">
+   <div class="submenu">
      <paper-menu-button style="float: right;">
 	<paper-icon-button icon="more-vert" style="color: #aaa"></paper-icon-button>
 	<paper-dropdown class="dropdown" halign="right">
 	  <core-menu class="menu">
-	      <paper-item data-id="{{id}}" on-click="{{addlist}}">Lisää listalle</paper-item>
-	      <paper-item data-id="{{id}}" on-click="{{removelist}}">Poista listalta</paper-item>
-	      <paper-item data-id="{{id}}" on-click="{{addseries}}">Lisää sarjoihin</paper-item>
+	      <paper-item data-id="{{r.id}}" on-click="{{addlist}}">Lisää listalle</paper-item>
+	      <paper-item data-id="{{r.id}}" on-click="{{removelist}}">Poista listalta</paper-item>
+	      <paper-item data-id="{{r.id}}" on-click="{{addseries}}">Lisää sarjoihin</paper-item>
 	  </core-menu>
 	</paper-dropdown>
      </paper-menu-button>
-     <core-item desc flex>{{ch}} {{time}} {{dur}}<br>{{desc}}</core-item>
+     <core-item desc flex>{{r.ch}} {{r.time}} {{r.dur}}<br>{{r.desc}}</core-item>
      <core-item style="clear: both;">
-      <video id="v" controls poster="{{thumb}}" preload="none" src="{{purl}}" onplay="ga('send','event','play')">
+      <video id="v" controls poster="{{r.thumb}}" preload="none" src="{{r.purl}}" onplay="ga('send','event','play')">
      </core-item>
    </div>
+  </template>
   </template>
 </core-menu>
 </template>
@@ -55,13 +60,14 @@ core-item[desc] {
         this.$.loading.hidden=true;
       },
       togglesubmenu: function(event,detail,sender) {
-	var elem=this.$.menu.querySelector('#p'+sender.dataset.id);
-	var h=elem.hidden;
-	var allelems=this.$.menu.querySelectorAll('.submenu');
-	for(i in allelems){
-	  allelems[i].hidden=true;
-	}
-	elem.hidden=!h;
+	for (i in this.r) {
+	  if (this.r[i].id==sender.dataset.id) {
+	    this.r[i].active=!this.r[i].active;
+	  }
+	  else {
+	    this.r[i].active=false;
+	  }
+        }
       },
       addlist: function(event,detail,sender) {
 	console.log("addlist");
