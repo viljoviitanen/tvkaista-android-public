@@ -87,6 +87,8 @@ class SearchHandler(webapp2.RequestHandler):
     resp=[]
     i=0
     hour=20
+    if param=="elokuva":
+      hour=500
     basetime=time.time()-hour*3600
     while i<hour:
       resp.append({ 'time': time.strftime("%d.%m klo %H:%M",time.gmtime(basetime+3600*i)),'thumb': 'https://s3.amazonaws.com/viljoviitanen/WP_20130315_110705Z.jpg', 'purl': 'https://s3.amazonaws.com/viljoviitanen/WP_20130315_110705Z.mp4', 'title': ('Ohjelma %d'%i), 'desc': 'Ohjelman kuvaus', 'ch': 'KANAVA', 'id': 10000+i})
