@@ -4,16 +4,12 @@
 <polymer-element name="page-channels" attributes="r">
 <template>
 <link rel="stylesheet" href="style.css" type="text/css">
-<core-menu>
  <core-item id="loading">
    <paper-spinner active style="margin-left: auto; margin-right: auto;"></paper-spinner>
  </core-item>
   <template id="results" repeat="{{r}}">
-   <core-item lines>
-    <paper-item flex noink><a href="#!programs/{{id}}!{{day}}">{{name}}</span></a></paper-item>
-   </core-item>
+   <a href="#!programs/{{id}}!{{day}}"><core-item lines>{{name}}</core-item></a>
   </template>
-</core-menu>
 </template>
   <script>
     Polymer('page-channels', {

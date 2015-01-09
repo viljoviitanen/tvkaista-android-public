@@ -58,15 +58,15 @@
   <app-router init="manual" mode="hash">
     <app-route path="/">
 	<template>
-	    <core-menu>
-	      <core-item lines><paper-item flex noink><a href="#!playlist">Lista</a></paper-item></core-item>
-	      <core-item lines><paper-item flex noink><a href="#!seasonpasses/*">Sarjat</a></paper-item></core-item>
-	      <core-item lines><paper-item flex noink><a href="#!search/elokuva">Elokuvat</a></paper-item></core-item>
-	      <core-item lines><paper-item flex noink><a href="#channels?today">Kanavat tänään</a></paper-item></core-item>
+            <div>
+	      <a href="#!playlist"><core-item lines>Lista</core-item></a>
+	      <a href="#!seasonpasses/*"><core-item lines>Sarjat</core-item></a>
+	      <a href="#!search/elokuva"><core-item lines>Elokuvat</core-item></a>
+	      <a href="#channels?today"><core-item lines>Kanavat tänään</core-item></a>
 	      <template id="days" repeat={{days}}>
-	        <core-item lines><paper-item flex noink><a href="#channels?{{day}}">{{name}}</a></paper-item></core-item>
+	        <a href="#channels?{{day}}"><core-item lines>{{name}}</core-item></a>
 	      </template>
-	    </core-menu>
+            </div>
 	    <script>
 	      var days=[];
 	      var wday=['Sunnuntai','Maanantai','Tiistai','Keskiviikko','Torstai','Perjantai','Lauantai'];
@@ -82,13 +82,12 @@
     </app-route>
     <app-route path="seasonpasses">
 	<template>
-	<core-menu>
 	  <core-item id="seasonpassloading">
 	        <paper-spinner id="spinner" active style="margin-left: auto; margin-right: auto;"></paper-spinner>
 	  </core-item>
 	  <template id="seasonpasslist" repeat="{{s}}">
 	    <core-item lines>
-	      <paper-item flex noink style="overflow: hidden;">{{name}}</paper-item>
+              <span flex style="overflow: hidden;">{{name}}</span>
 	      <paper-menu-button>
 		<paper-icon-button icon="more-vert" style="color: #aaa"></paper-icon-button>
 		<paper-dropdown class="dropdown" halign="right">
@@ -99,7 +98,6 @@
 	      </paper-menu-button>
 	    </core-item>
 	  </template>
-	</core-menu>
 	<script>
 	function remove_seasonpass(id) {
 	  //console.log("in remove reasonpass");
@@ -113,7 +111,7 @@
     </app-route>
     <app-route path="search">
 	<template>
-	<core-menu>
+	<div>
 	  <template id="searches" repeat="{{s}}">
 	    <core-item lines>
 	      <paper-item flex noink onclick="click_value(event)" style="overflow: hidden;">{{}}</a></paper-item>
@@ -127,7 +125,7 @@
 	      </paper-menu-button>
 	    </core-item>
 	  </template>
-	</core-menu>
+	</div>
 	<script>
 	// this code should really by "Polymerized", but...
 	// searchlist is stored like this: { "item": count, "item2", count }
@@ -190,7 +188,7 @@
     <app-route path="logout">
 	<template>
 	  <core-menu>
-	    <core-item><paper-button raised onclick="logout()">Kirjaudu ulos</paper-button></core-item>
+	    <paper-button raised onclick="logout()">Kirjaudu ulos</paper-button>
 	  </core-menu>
 	</template>
     </app-route>
@@ -198,13 +196,11 @@
 	<template>
 	  <core-menu>
 	    <core-item>Aseta laatu</core-item>
-	    <core-item>
 		<paper-radio-group id="quality">
 		  <paper-radio-button name="mp4" label="300k" onclick="setquality('mp4')"></paper-radio-button>
 		  <paper-radio-button name="mpeg4" label="1M" onclick="setquality('mpeg4')"></paper-radio-button>
 		  <paper-radio-button name="h264" label="2M" onclick="setquality('h264')"></paper-radio-button>
 		</paper-radio-group>
-	    </core-item>
 	  </core-menu>
 	  <script>
 	    showquality();

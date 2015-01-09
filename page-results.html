@@ -1,55 +1,45 @@
 <!-- Copyright (c) 2014-2015 Viljo Viitanen -->
 
+<link rel="import" href="bower_components/core-list/core-list.html">
+<link rel="import" href="bower_components/core-overlay/core-overlay.html">
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="bower_components/paper-toast/paper-toast.html">
 <polymer-element name="page-results" attributes="r">
 <template>
 <link rel="stylesheet" href="style.css" type="text/css">
-<style>
-core-item {
-  white-space: normal;
-}
-core-item[desc] {
-  font-size: small; 
-  padding-left: 0.5em;
-}
-.submenu {
-  background-color: white;
-}
-</style>
 <paper-toast id="toast"></paper-toast>
-<core-ajax id="menuajax" url="/menu" handleAs="json" method="POST" on-core-response={{ajaxresponse}} on-core-error={{ajaxerror}}>
-</core-ajax>
-<core-menu id="menu">
- <core-item id="loading">
-   <paper-spinner active style="margin-left: auto; margin-right: auto;"></paper-spinner>
- </core-item>
-  
-  <template id="results" repeat="{{r in r}}">
-   <core-item lines>
-    <paper-item flex noink id="p{{r.id}}"><a on-click="{{togglesubmenu}}" data-id="{{r.id}}"
-    >{{r.title}} <span class="right">{{r.time}}</span></a></paper-item>
-   </core-item>
-   <template if="{{r.active}}">
-   <div class="submenu">
+ <core-overlay id="overlay" layered backdrop>
+    <div style="background:white; width:100vw" core-overlay-toggle>
      <paper-menu-button style="float: right;">
 	<paper-icon-button icon="more-vert" style="color: #aaa"></paper-icon-button>
 	<paper-dropdown class="dropdown" halign="right">
 	  <core-menu class="menu">
-	      <paper-item data-id="{{r.id}}" on-click="{{addlist}}">Lisää listalle</paper-item>
-	      <paper-item data-id="{{r.id}}" on-click="{{removelist}}">Poista listalta</paper-item>
-	      <paper-item data-id="{{r.id}}" on-click="{{addseries}}">Lisää sarjoihin</paper-item>
+	      <paper-item data-id="{{oid}}" on-click="{{addlist}}">Lisää listalle</paper-item>
+	      <paper-item data-id="{{oid}}" on-click="{{removelist}}">Poista listalta</paper-item>
+	      <paper-item data-id="{{oid}}" on-click="{{addseries}}">Lisää sarjoihin</paper-item>
 	  </core-menu>
 	</paper-dropdown>
      </paper-menu-button>
-     <core-item desc flex>{{r.ch}} {{r.time}} {{r.dur}}<br>{{r.desc}}</core-item>
-     <core-item style="clear: both;">
-      <video id="v" controls poster="{{r.thumb}}" preload="none" src="{{r.purl}}" onplay="ga('send','event','play')">
-     </core-item>
-   </div>
+     <core-item flex core-overlay-toggle style="font-size: small;white-space: normal;">{{otitle}}<br>{{odesc}}</core-item>
+     <video id="v" style="clear: both; width: 100vw; height: 57vw" controls poster="{{othumb}}"
+      preload="metadata" src="{{opurl}}" onplay="ga('send','event','play')">
+    </div>
+ </core-overlay>
+ <core-ajax id="menuajax" url="/menu" handleAs="json" method="POST" on-core-response={{ajaxresponse}} on-core-error={{ajaxerror}}>
+ </core-ajax>
+ <core-item id="loading">
+   <paper-spinner active style="margin-left: auto; margin-right: auto;"></paper-spinner>
+ </core-item>
+  
+ <div fit>
+ <core-list style="height:100%" id="list" data="{{r}}" flex height=48 on-core-activate="{{togglesubmenu}}" >
+  <template>
+   <core-item lines>
+    <span flex>{{model.title}}</span><span class="right" style="font-size:smaller">{{model.time}}</span>
+   </core-item>
   </template>
-  </template>
-</core-menu>
+ </core-list>
+ </div>
 </template>
   <script>
     Polymer('page-results', {
@@ -60,44 +50,47 @@ core-item[desc] {
         this.$.loading.hidden=true;
       },
       togglesubmenu: function(event,detail,sender) {
-	for (i in this.r) {
-	  if (this.r[i].id==sender.dataset.id) {
-	    this.r[i].active=!this.r[i].active;
-	  }
-	  else {
-	    this.r[i].active=false;
-	  }
+	//console.log(detail.data);
+	// in case there were no results
+	if (!detail.data.id) {
+	  return;
         }
+	this.oid=detail.data.id;
+	this.odesc=detail.data.desc;
+	this.otitle=detail.data.title+' '+detail.data.ch+' '+detail.data.time+' '+detail.data.dur;
+	this.opurl=detail.data.purl;
+	this.othumb=detail.data.thumb;
+	this.$.overlay.toggle();
       },
       addlist: function(event,detail,sender) {
-	console.log("addlist");
-	console.log(sender.dataset.id);
+	//console.log("addlist");
+	//console.log(sender.dataset.id);
 	this.$.menuajax.params={"token":random,"id":sender.dataset.id,"op":2};
 	this.$.toast.text="Ohjelma lisätty listalle";
 	this.$.menuajax.go();
       },
       removelist: function(event,detail,sender) {
-	console.log("removelist");
-	console.log(sender.dataset.id);
+	//console.log("removelist");
+	//console.log(sender.dataset.id);
 	this.$.menuajax.params={"token":random,"id":sender.dataset.id,"op":1};
 	this.$.toast.text="Ohjelma poistettu listalta";
 	this.$.menuajax.go();
       },
       //removing the series ain't here 'cos it needs the seasonpass id, not program id
       addseries: function(event,detail,sender) {
-	console.log("addseries");
-	console.log(sender.dataset.id);
+	//console.log("addseries");
+	//console.log(sender.dataset.id);
 	this.$.menuajax.params={"token":random,"id":sender.dataset.id,"op":4};
 	this.$.toast.text="Ohjelma lisätty sarjoihin";
 	this.$.menuajax.go();
       },
       ajaxerror: function(event) {
-	console.log("in ajaxerror");
+	//console.log("in ajaxerror");
 	this.$.toast.text="Toiminto epäonnistui!"
 	this.$.toast.show();
       },
       ajaxresponse: function(event) {
-	console.log("in ajaxresponse");
+	//console.log("in ajaxresponse");
 	this.$.toast.show();
 	sessionStorage.removeItem("/seasonpasses?param=*");
 	sessionStorage.removeItem("/playlist?param=");
