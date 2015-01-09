@@ -27,11 +27,11 @@
  </core-overlay>
  <core-ajax id="menuajax" url="/menu" handleAs="json" method="POST" on-core-response={{ajaxresponse}} on-core-error={{ajaxerror}}>
  </core-ajax>
+ <div fit style="background: #eee">
  <core-item id="loading">
    <paper-spinner active style="margin-left: auto; margin-right: auto;"></paper-spinner>
  </core-item>
   
- <div fit>
  <core-list style="height:100%" id="list" data="{{r}}" flex height=48 on-core-activate="{{togglesubmenu}}" >
   <template>
    <core-item lines>
