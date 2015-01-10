@@ -17,11 +17,11 @@ Searches are stored in html5 localstorage, and most used searches are in the
 top of the list. Also a html5 sessionstorage cache is used for json replies.
 
 In addtition to to Polymer, this uses
-https://github.com/erikringsmuth/app-router to make a "single page app".
+[app-router](https://github.com/erikringsmuth/app-router) to make a "single page app".
 
 This project combines code with several licenses. Browser-side client code is
-MIT and BSD licensed, see LICENSE.html . The simple test server test.py is
-GPLv2. The app and test server can be deployed to Heroku.
+MIT and BSD licensed, see [LICENSE.html](LICENSE.html). The simple test server [test.py](test.py) is
+[GPLv2](LICENSE.GPLv2.txt). The app and test server can be deployed to Heroku.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
