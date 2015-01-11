@@ -49,6 +49,10 @@
       stop: function() {
         this.$.loading.hidden=true;
       },
+      closeoverlay: function() {
+	//console.log("closeoverlay");
+	this.$.overlay.opened=false;
+      },
       togglesubmenu: function(event,detail,sender) {
 	//console.log(detail.data);
 	// in case there were no results

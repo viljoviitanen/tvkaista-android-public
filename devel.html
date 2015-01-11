@@ -328,6 +328,9 @@
           event.preventDefault();
           router.go('login');
         }
+        if (document.querySelector('page-results')) {
+          document.querySelector('page-results').closeoverlay();
+	}
       });
 
       document.getElementById("loginajax").addEventListener("core-error", function(e) {
