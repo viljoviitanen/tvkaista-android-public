@@ -75,3 +75,15 @@ core-item[lines] {
 paper-button {
       background: #ffffff;
 }
+@media (orientation:portrait) {
+  * /deep/ video {
+    width: 100vw;
+    height: 57vw;
+  }
+}
+@media (orientation:landscape) {
+  * /deep/ video {
+    width: 100vw;
+    height: 33vw;
+  }
+}
