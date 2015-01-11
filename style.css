@@ -37,7 +37,7 @@ core-item[lines] {
   white-space: nowrap;
   overflow: hidden;
 }
-@media (min-width: 575px) {
+@media (min-width: 533px) {
   .desc {
   padding-left: 5px;
   font-size: smaller;
@@ -47,7 +47,7 @@ core-item[lines] {
   overflow: hidden;
   }
 }
-@media (max-width: 574px) {
+@media (max-width: 532px) {
   .desc {
     display: none;
   }
