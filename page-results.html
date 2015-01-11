@@ -34,9 +34,11 @@
   
  <core-list style="height:100%" id="list" data="{{r}}" flex height=48 on-core-activate="{{togglesubmenu}}" >
   <template>
-   <core-item lines>
-    <span flex>{{model.title}}</span><span class="right" style="font-size:smaller">{{model.time}}</span>
-   </core-item>
+    <div class="row">
+      <div class="title">{{model.title}}</div>
+      <div class="desc">{{model.desc}}</div>
+      <div class="time">{{model.time}}</div>
+    </div>
   </template>
  </core-list>
  </div>
