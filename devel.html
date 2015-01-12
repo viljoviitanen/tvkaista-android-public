@@ -435,10 +435,11 @@
           var key='/'+path+'?param='+encodeURIComponent(param);
 	  if (sessionStorage.getItem(key)) {
 	    var s=JSON.parse(sessionStorage.getItem(key));
+            //console.log(key+" sessionstorage preliminary");
+            document.querySelector('page-results').r=injectcreds(s.result);
 	    var d = new Date();
 	    if (d.getTime() - s.time < 60*1000) { //1 minute
               //console.log(key+" sessionstorage hit "+(d.getTime()-+s.time));
-              document.querySelector('page-results').r=injectcreds(s.result);
               document.querySelector('page-results').stop();
 	      return;
 	    }
