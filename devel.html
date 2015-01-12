@@ -432,6 +432,7 @@
 	}
         if (event.detail.path.substring(0,1)=='!') {
 	  //console.log("in !");
+          document.getElementById("searchajax").abort();
           if(event.detail.path.indexOf('/')==-1) {
             var path=event.detail.path.substring(1);
             var param="";
@@ -451,7 +452,6 @@
 	      return;
 	    }
 	  }
-          document.getElementById("searchajax").abort();
           document.getElementById("searchajax").url='/'+path;
           document.getElementById("searchajax").params={"param":param};
           document.getElementById("searchajax").go();
