@@ -15,6 +15,7 @@
 <link rel="import" href="bower_components/core-icons/core-icons.html">
 <link rel="import" href="bower_components/core-item/core-item.html">
 <link rel="import" href="bower_components/core-header-panel/core-header-panel.html">
+<link rel="import" href="bower_components/core-label/core-label.html">
 <link rel="import" href="bower_components/core-menu/core-menu.html">
 <link rel="import" href="bower_components/core-scaffold/core-scaffold.html">
 <link rel="import" href="bower_components/core-toolbar/core-toolbar.html">
@@ -177,14 +178,19 @@
     <app-route path="channels" element="page-channels"></app-route>
     <app-route path="login">
 	<template>
+         <form>
 	  <core-menu id="login">
-	    <core-item><paper-item><a href="#about">Tietoja tvkaista-android v2 sovelluksesta</a></paper-item></core-item>
-	    <core-item><paper-input id="user" label="Käyttäjätunnus"></paper-input></core-item>
-	    <core-item><paper-input-decorator label="Salasana"><input is="core-input" id="pass" type="password" onkeydown="return keydown(event)"></paper-input-decorator></core-item>
-	    <core-item><paper-toggle-button id="remember"></paper-toggle-button>Muista kirjautuminen 2 viikkoa</core-item>
+	    <core-item><paper-input-decorator label="Käyttäjätunnus"><input is="core-input" id="user" tabindex="1"></paper-input-decorator></core-item>
+	    <core-item><paper-input-decorator label="Salasana"><input is="core-input" id="pass" type="password" onkeydown="return keydown(event)" tabindex="2"></paper-input-decorator></core-item>
+	    <core-item><paper-toggle-button id="remember"></paper-toggle-button>&nbsp;Muista kirjautuminen 2 viikkoa</core-item>
 	    <core-item><paper-button raised onclick="login()">Kirjaudu sisään</paper-button></core-item>
-	    <div id="msg" style="margin-top:1em"></div>
 	  </core-menu>
+	  <core-item lines style="color:#888" id="msg"></core-item>
+	  <core-item lines><paper-item><a href="#about">Tietoja tvkaista-android v2 sovelluksesta</a></paper-item></core-item>
+         </form>
+         <script>
+           document.querySelector('form').action=location.pathname;
+         </script>
 	</template>
     </app-route>
     <app-route path="logout">
@@ -328,6 +334,10 @@
           event.preventDefault();
           router.go('login');
         }
+        if (event.detail.path == 'login' && readCookie("login")) {
+          event.preventDefault();
+          router.go('/');
+        }
         if (document.querySelector('page-results')) {
           document.querySelector('page-results').closeoverlay();
 	}
@@ -346,10 +356,7 @@
 		  days=14;
 		}
                 createCookie("login",encodeURIComponent(JSON.stringify({'user':u,'pass':p})),days);
-                router=document.querySelector('app-router');
-		//when vulcanized, app-router bugs and leaves the contents visible. weird.
-	        document.getElementById("login").innerHTML="";
-                router.go('/');
+                document.querySelector('form').submit(); //allow chrome save password prompt
 	      }
 	      else {
 	        document.getElementById("msg").innerHTML="Kirjautuminen ei onnistunut: "+r;
