@@ -26,6 +26,7 @@ import os
 
 class LoginHandler(webapp2.RequestHandler):
   def post(self):
+    time.sleep(1)
     if self.request.POST['u'] != '' and self.request.POST['p'] != '' :
       resp="ok"
     else:
